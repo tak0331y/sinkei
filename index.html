@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>神経衰弱ゲーム</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      color: #fff;
+      text-shadow: 1px 1px 2px #333;
+    }
+    #controls {
+      margin-bottom: 20px;
+    }
+    select, button {
+      font-size: 1em;
+      padding: 5px 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    #game-board {
+      display: grid;
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .card {
+      width: 80px;
+      height: 80px;
+      background: #ffccff;
+      font-size: 2em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 10px;
+      box-shadow: 2px 2px 5px #888;
+      user-select: none;
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card.flipped {
+      background: #66ccff;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #fff;
+      text-shadow: 1px 1px 2px #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧠 神経衰弱ゲーム</h1>
+  <div id="controls">
+    <label for="card-count">カード枚数：</label>
+    <select id="card-count">
+      <option value="8">8枚（4ペア）</option>
+      <option value="16" selected>16枚（8ペア）</option>
+      <option value="24">24枚（12ペア）</option>
+    </select>
+    <button onclick="startGame()">ゲーム開始</button>
+  </div>
+  <div id="game-board"></div>
+  <p id="message"></p>
+
+  <script>
+    const board = document.getElementById("game-board");
+    const message = document.getElementById("message");
+    const cardCountSelect = document.getElementById("card-count");
+
+    const allSymbols = ["🍎","🍌","🍇","🍓","🍒","🍍","🥝","🍉","🍋","🍈","🍊","🥥"];
+    let flippedCards = [];
+    let matchedCount = 0;
+
+    function startGame() {
+      board.innerHTML = "";
+      message.textContent = "";
+      flippedCards = [];
+      matchedCount = 0;
+
+      const totalCards = parseInt(cardCountSelect.value);
+      const pairCount = totalCards / 2;
+      const symbols = allSymbols.slice(0, pairCount);
+      let cards = [...symbols, ...symbols];
+      cards.sort(() => Math.random() - 0.5);
+
+      const columns = Math.min(6, pairCount * 2 / 2);
+      board.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
+
+      cards.forEach((symbol, index) => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.dataset.symbol = symbol;
+        card.dataset.index = index;
+        card.textContent = "❓";
+        card.addEventListener("click", flipCard);
+        board.appendChild(card);
+      });
+    }
+
+    function flipCard(e) {
+      const card = e.target;
+      if (card.classList.contains("flipped") || flippedCards.length === 2) return;
+
+      card.textContent = card.dataset.symbol;
+      card.classList.add("flipped");
+      flippedCards.push(card);
+
+      if (flippedCards.length === 2) {
+        const [card1, card2] = flippedCards;
+        if (card1.dataset.symbol === card2.dataset.symbol) {
+          matchedCount += 1;
+          flippedCards = [];
+          const totalPairs = parseInt(cardCountSelect.value) / 2;
+          if (matchedCount === totalPairs) {
+            message.textContent = "🎉 全て揃いました！おめでとう！";
+          }
+        } else {
+          setTimeout(() => {
+            card1.textContent = "❓";
+            card2.textContent = "❓";
+            card1.classList.remove("flipped");
+            card2.classList.remove("flipped");
+            flippedCards = [];
+          }, 800);
+        }
+      }
+    }
+
+    // 初期表示
+    startGame();
+  </script>
+</body>
+</html>
