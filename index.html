@@ -69,6 +69,7 @@
       <option value="16" selected>16枚（8ペア）</option>
       <option value="24">24枚（12ペア）</option>
       <option value="32">32枚（16ペア）</option>
+      <option value="36">36枚（18ペア）</option>
     </select>
     <button onclick="startGame()">ゲーム開始</button>
   </div>
@@ -82,7 +83,8 @@
 
     const allSymbols = [
       "🍎","🍌","🍇","🍓","🍒","🍍","🥝","🍉",
-      "🍋","🍈","🍊","🥥","🥭","🍅","🌽","🥕"
+      "🍋","🍈","🍊","🥥","🥭","🍅","🌽","🥕",
+      "🍆","🥔","🥦","🧄","🧅","🌶️","🍠","🥬"
     ];
     let flippedCards = [];
     let matchedCount = 0;
@@ -99,7 +101,7 @@
       let cards = [...symbols, ...symbols];
       cards.sort(() => Math.random() - 0.5);
 
-      const columns = Math.min(8, Math.ceil(Math.sqrt(totalCards)));
+      const columns = Math.min(9, Math.ceil(Math.sqrt(totalCards)));
       board.style.gridTemplateColumns = `repeat(${columns}, 80px)`;
 
       cards.forEach((symbol, index) => {
