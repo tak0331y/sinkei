@@ -34,9 +34,9 @@
     .card {
       width: 80px;
       height: 80px;
-      background: #ffccff;
-      font-size: 2em;
-      color: #fff;
+      background: #fff;
+      font-size: 1.5em;
+      color: #333;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -45,12 +45,14 @@
       box-shadow: 2px 2px 5px #888;
       user-select: none;
       transition: transform 0.3s;
+      border: 2px solid #ccc;
     }
     .card:hover {
       transform: scale(1.05);
     }
     .card.flipped {
-      background: #66ccff;
+      background: #ffe4e1;
+      border-color: #ff69b4;
     }
     #message {
       margin-top: 20px;
@@ -61,7 +63,7 @@
   </style>
 </head>
 <body>
-  <h1>🧠 神経衰弱ゲーム</h1>
+  <h1>🃏 神経衰弱ゲーム（トランプ模様）</h1>
   <div id="controls">
     <label for="card-count">カード枚数：</label>
     <select id="card-count">
@@ -81,11 +83,16 @@
     const message = document.getElementById("message");
     const cardCountSelect = document.getElementById("card-count");
 
-    const allSymbols = [
-      "🍎","🍌","🍇","🍓","🍒","🍍","🥝","🍉",
-      "🍋","🍈","🍊","🥥","🥭","🍅","🌽","🥕",
-      "🍆","🥔","🥦","🧄","🧅","🌶️","🍠","🥬"
-    ];
+    const suits = ["♥️", "♠️", "♦️", "♣️"];
+    const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    const allCards = [];
+
+    suits.forEach(suit => {
+      ranks.forEach(rank => {
+        allCards.push(`${rank}${suit}`);
+      });
+    });
+
     let flippedCards = [];
     let matchedCount = 0;
 
@@ -97,8 +104,8 @@
 
       const totalCards = parseInt(cardCountSelect.value);
       const pairCount = totalCards / 2;
-      const symbols = allSymbols.slice(0, pairCount);
-      let cards = [...symbols, ...symbols];
+      const selectedCards = allCards.slice(0, pairCount);
+      let cards = [...selectedCards, ...selectedCards];
       cards.sort(() => Math.random() - 0.5);
 
       const columns = Math.min(9, Math.ceil(Math.sqrt(totalCards)));
@@ -109,7 +116,7 @@
         card.classList.add("card");
         card.dataset.symbol = symbol;
         card.dataset.index = index;
-        card.textContent = "❓";
+        card.textContent = "🂠";
         card.addEventListener("click", flipCard);
         board.appendChild(card);
       });
@@ -134,8 +141,8 @@
           }
         } else {
           setTimeout(() => {
-            card1.textContent = "❓";
-            card2.textContent = "❓";
+            card1.textContent = "🂠";
+            card2.textContent = "🂠";
             card1.classList.remove("flipped");
             card2.classList.remove("flipped");
             flippedCards = [];
